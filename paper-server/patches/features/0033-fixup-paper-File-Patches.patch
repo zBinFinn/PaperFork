@@ -1,0 +1,426 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: zBinFinn <84500718+zBinFinn@users.noreply.github.com>
+Date: Sat, 4 Jul 2026 23:18:30 +0200
+Subject: [PATCH] fixup! paper File Patches
+
+
+diff --git a/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/net/minecraft/server/network/ServerGamePacketListenerImpl.java
+index cc7d66f9d7d9f206417dc080dda2a89e5c81dbe3..06a44e0bb6e9ffedf778e79b452d4621a35ed88e 100644
+--- a/net/minecraft/server/network/ServerGamePacketListenerImpl.java
++++ b/net/minecraft/server/network/ServerGamePacketListenerImpl.java
+@@ -478,7 +478,7 @@ public class ServerGamePacketListenerImpl
+                 LOGGER.debug("Ignoring packet due to disconnection");
+                 throw new CancellationException("disconnected");
+             } else {
+-                return (R)result;
++                return (R) result;
+             }
+         });
+     }
+@@ -662,7 +662,7 @@ public class ServerGamePacketListenerImpl
+                     } // else: no collision at all detected, why do we care?
+                 }
+                 if (teleportBack) {
+-                // Paper end - optimise out extra getCubes
++                    // Paper end - optimise out extra getCubes
+                     vehicle.absSnapTo(oldX, oldY, oldZ, targetYRot, targetXRot);
+                     this.send(ClientboundMoveVehiclePacket.fromEntity(vehicle));
+                     vehicle.removeLatestMovementRecording();
+@@ -837,7 +837,7 @@ public class ServerGamePacketListenerImpl
+ 
+     // Paper start - AsyncTabCompleteEvent
+     private static final java.util.concurrent.ExecutorService TAB_COMPLETE_EXECUTOR = java.util.concurrent.Executors.newFixedThreadPool(4,
+-        new com.google.common.util.concurrent.ThreadFactoryBuilder().setDaemon(true).setNameFormat("Async Tab Complete Thread - #%d").setUncaughtExceptionHandler(new net.minecraft.DefaultUncaughtExceptionHandlerWithName(MinecraftServer.LOGGER)).build());
++                                                                                                                                        new com.google.common.util.concurrent.ThreadFactoryBuilder().setDaemon(true).setNameFormat("Async Tab Complete Thread - #%d").setUncaughtExceptionHandler(new net.minecraft.DefaultUncaughtExceptionHandlerWithName(MinecraftServer.LOGGER)).build());
+     // Paper end - AsyncTabCompleteEvent
+ 
+     @Override
+@@ -905,6 +905,7 @@ public class ServerGamePacketListenerImpl
+             // Paper end - Brigadier API
+         }
+     }
++
+     // Paper start - brig API
+     private static Suggestions limitTo(final Suggestions suggestions, final int size) {
+         return suggestions.getList().size() <= size ? suggestions : new Suggestions(suggestions.getRange(), suggestions.getList().subList(0, size));
+@@ -1202,7 +1203,7 @@ public class ServerGamePacketListenerImpl
+     private <T> void setGameRuleValue(final GameRules gameRules, final GameRule<T> rule, final String value) {
+         rule.deserialize(value).result().ifPresent(parsedValue -> {
+             parsedValue = org.bukkit.craftbukkit.event.CraftEventFactory.handleGameRuleSet(rule, parsedValue, this.player.level(), this.player.getBukkitEntity()).value(); // Paper - per-world game rules and event
+-            this.broadcastGameRuleChangeToOperators(rule, (T)parsedValue);
++            this.broadcastGameRuleChangeToOperators(rule, (T) parsedValue);
+         });
+     }
+ 
+@@ -1314,7 +1315,7 @@ public class ServerGamePacketListenerImpl
+                 if (packet.action() == ServerboundTestInstanceBlockActionPacket.Action.QUERY) {
+                     size = packet.data()
+                         .test()
+-                        .flatMap(testKey -> TestInstanceBlockEntity.getStructureSize(this.player.level(), (ResourceKey<GameTestInstance>)testKey));
++                        .flatMap(testKey -> TestInstanceBlockEntity.getStructureSize(this.player.level(), (ResourceKey<GameTestInstance>) testKey));
+                 } else {
+                     size = Optional.empty();
+                 }
+@@ -1566,7 +1567,7 @@ public class ServerGamePacketListenerImpl
+                                     this.lastTick = (int) (System.currentTimeMillis() / 50);
+ 
+                                     if (deltaPackets > Math.max(this.allowedPlayerTicks, 5)) {
+-                                    // CraftBukkit end
++                                        // CraftBukkit end
+                                         LOGGER.debug(
+                                             "{} is sending move packets too frequently ({} packets since last tick)",
+                                             this.player.getPlainTextName(),
+@@ -1590,7 +1591,7 @@ public class ServerGamePacketListenerImpl
+                                     if (this.player.level().paperConfig().chunks.preventMovingIntoUnloadedChunks && (this.player.getX() != targetX || this.player.getZ() != targetZ) && !level.areChunksLoadedForMove(this.player.getBoundingBox().expandTowards(new Vec3(targetX, targetY, targetZ).subtract(this.player.position())))) {
+                                         // Paper start - Add fail move event
+                                         io.papermc.paper.event.player.PlayerFailMoveEvent event = fireFailMove(io.papermc.paper.event.player.PlayerFailMoveEvent.FailReason.MOVED_INTO_UNLOADED_CHUNK,
+-                                                targetX, targetY, targetZ, targetYRot, targetXRot, false);
++                                                                                                               targetX, targetY, targetZ, targetYRot, targetXRot, false);
+                                         if (!event.isAllowed()) {
+                                             this.internalTeleport(PositionMoveRotation.of(this.player), Collections.emptySet());
+                                             return;
+@@ -1605,13 +1606,13 @@ public class ServerGamePacketListenerImpl
+                                             // CraftBukkit end
+                                             // Paper start - Add fail move event
+                                             io.papermc.paper.event.player.PlayerFailMoveEvent event = fireFailMove(io.papermc.paper.event.player.PlayerFailMoveEvent.FailReason.MOVED_TOO_QUICKLY,
+-                                                    targetX, targetY, targetZ, targetYRot, targetXRot, true);
++                                                                                                                   targetX, targetY, targetZ, targetYRot, targetXRot, true);
+                                             if (!event.isAllowed()) {
+                                                 if (event.getLogWarning()) {
+-                                            LOGGER.warn("{} moved too quickly! {},{},{}", this.player.getPlainTextName(), xDist, yDist, zDist);
++                                                    LOGGER.warn("{} moved too quickly! {},{},{}", this.player.getPlainTextName(), xDist, yDist, zDist);
+                                                 }
+                                                 this.teleport(
+-                                                        this.player.getX(), this.player.getY(), this.player.getZ(), this.player.getYRot(), this.player.getXRot()
++                                                    this.player.getX(), this.player.getY(), this.player.getZ(), this.player.getYRot(), this.player.getXRot()
+                                                 );
+                                                 return;
+                                             }
+@@ -1670,12 +1671,12 @@ public class ServerGamePacketListenerImpl
+                                     && !this.player.isInPostImpulseGraceTime()) {
+                                     // Paper start - Add fail move event
+                                     io.papermc.paper.event.player.PlayerFailMoveEvent event = fireFailMove(io.papermc.paper.event.player.PlayerFailMoveEvent.FailReason.MOVED_WRONGLY,
+-                                            targetX, targetY, targetZ, targetYRot, targetXRot, true);
++                                                                                                           targetX, targetY, targetZ, targetYRot, targetXRot, true);
+                                     if (!event.isAllowed()) {
+                                         movedWrongly = true;
+                                         if (event.getLogWarning())
+-                                     // Paper end
+-                                    LOGGER.warn("{} moved wrongly!", this.player.getPlainTextName());
++                                            // Paper end
++                                            LOGGER.warn("{} moved wrongly!", this.player.getPlainTextName());
+                                     } // Paper
+                                 }
+ 
+@@ -1693,7 +1694,7 @@ public class ServerGamePacketListenerImpl
+                                 // Paper end - optimise out extra getCubes
+                                 if (!allowMovement) {
+                                     io.papermc.paper.event.player.PlayerFailMoveEvent event = fireFailMove(io.papermc.paper.event.player.PlayerFailMoveEvent.FailReason.CLIPPED_INTO_BLOCK,
+-                                            targetX, targetY, targetZ, targetYRot, targetXRot, false);
++                                                                                                           targetX, targetY, targetZ, targetYRot, targetXRot, false);
+                                     if (event.isAllowed()) {
+                                         allowMovement = true;
+                                     }
+@@ -1944,7 +1945,8 @@ public class ServerGamePacketListenerImpl
+         // Paper start - Prevent teleporting dead entities
+         if (this.player.isRemoved()) {
+             LOGGER.info("Attempt to teleport removed player {} restricted", this.player.getScoreboardName());
+-            if (this.server.isDebugging()) io.papermc.paper.util.TraceUtil.dumpTraceForThread("Attempt to teleport removed player");
++            if (this.server.isDebugging())
++                io.papermc.paper.util.TraceUtil.dumpTraceForThread("Attempt to teleport removed player");
+             return;
+         }
+         // Paper end - Prevent teleporting dead entities
+@@ -2022,7 +2024,8 @@ public class ServerGamePacketListenerImpl
+                         }
+                         // CraftBukkit end
+                         this.player.stopUsingItem();
+-                        if (io.papermc.paper.configuration.GlobalConfiguration.get().unsupportedSettings.updateEquipmentOnPlayerActions) this.player.detectEquipmentUpdates(); // Paper - Force update attributes.
++                        if (io.papermc.paper.configuration.GlobalConfiguration.get().unsupportedSettings.updateEquipmentOnPlayerActions)
++                            this.player.detectEquipmentUpdates(); // Paper - Force update attributes.
+                     }
+ 
+                     return;
+@@ -2044,20 +2047,23 @@ public class ServerGamePacketListenerImpl
+                         }
+                         // CraftBukkit end
+                         this.player.drop(false);
+-                        if (io.papermc.paper.configuration.GlobalConfiguration.get().unsupportedSettings.updateEquipmentOnPlayerActions) this.player.detectEquipmentUpdates(); // Paper - Force update attributes.
++                        if (io.papermc.paper.configuration.GlobalConfiguration.get().unsupportedSettings.updateEquipmentOnPlayerActions)
++                            this.player.detectEquipmentUpdates(); // Paper - Force update attributes.
+                     }
+ 
+                     return;
+                 case DROP_ALL_ITEMS:
+                     if (!this.player.isSpectator()) {
+                         this.player.drop(true);
+-                        if (io.papermc.paper.configuration.GlobalConfiguration.get().unsupportedSettings.updateEquipmentOnPlayerActions) this.player.detectEquipmentUpdates(); // Paper - Force update attributes.
++                        if (io.papermc.paper.configuration.GlobalConfiguration.get().unsupportedSettings.updateEquipmentOnPlayerActions)
++                            this.player.detectEquipmentUpdates(); // Paper - Force update attributes.
+                     }
+ 
+                     return;
+                 case RELEASE_USE_ITEM:
+                     this.player.releaseUsingItem();
+-                    if (io.papermc.paper.configuration.GlobalConfiguration.get().unsupportedSettings.updateEquipmentOnPlayerActions) this.player.detectEquipmentUpdates(); // Paper - Force update attributes.
++                    if (io.papermc.paper.configuration.GlobalConfiguration.get().unsupportedSettings.updateEquipmentOnPlayerActions)
++                        this.player.detectEquipmentUpdates(); // Paper - Force update attributes.
+                     return;
+                 case START_DESTROY_BLOCK:
+                 case ABORT_DESTROY_BLOCK:
+@@ -2090,7 +2096,8 @@ public class ServerGamePacketListenerImpl
+                         }
+                     }
+                     // Paper end - Send block entities after destroy prediction
+-                    if (io.papermc.paper.configuration.GlobalConfiguration.get().unsupportedSettings.updateEquipmentOnPlayerActions) this.player.detectEquipmentUpdates(); // Paper - Force update attributes.
++                    if (io.papermc.paper.configuration.GlobalConfiguration.get().unsupportedSettings.updateEquipmentOnPlayerActions)
++                        this.player.detectEquipmentUpdates(); // Paper - Force update attributes.
+                     return;
+                 default:
+                     throw new IllegalArgumentException("Invalid player action");
+@@ -2197,15 +2204,15 @@ public class ServerGamePacketListenerImpl
+                                     && success.swingSource() == InteractionResult.SwingSource.SERVER) {
+                                     this.player.swing(hand, true);
+                                 }
+-                            // Paper start - Fix inventory desync; MC-99075
+-                            // From level.mayInteract(this.player, pos)
++                                // Paper start - Fix inventory desync; MC-99075
++                                // From level.mayInteract(this.player, pos)
+                             } else if (this.server.isUnderSpawnProtection(level, pos, player)) {
+                                 if (io.papermc.paper.util.MCUtil.clientPredictsInteraction(this.player, level.getBlockState(pos), itemStack)) {
+                                     this.player.containerMenu.sendAllDataToRemote();
+                                 } else {
+                                     this.player.containerMenu.forceHeldSlot(hand);
+                                 }
+-                            // Paper end - Fix inventory desync
++                                // Paper end - Fix inventory desync
+                             } else {
+                                 this.player.sendBuildLimitMessage(true, maxY);
+                             }
+@@ -2213,7 +2220,8 @@ public class ServerGamePacketListenerImpl
+                             this.send(new ClientboundBlockUpdatePacket(level, pos));
+                             this.send(new ClientboundBlockUpdatePacket(level, pos.relative(direction)));
+                         }
+-                        if (io.papermc.paper.configuration.GlobalConfiguration.get().unsupportedSettings.updateEquipmentOnPlayerActions) this.player.detectEquipmentUpdates(); // Paper - Force update attributes.
++                        if (io.papermc.paper.configuration.GlobalConfiguration.get().unsupportedSettings.updateEquipmentOnPlayerActions)
++                            this.player.detectEquipmentUpdates(); // Paper - Force update attributes.
+                         // Paper - Remove unused warning
+                     }
+                 }
+@@ -2357,7 +2365,9 @@ public class ServerGamePacketListenerImpl
+         PacketUtils.ensureRunningOnSameThread(packet, this, this.player.level());
+         if (this.player.isImmobile()) return; // CraftBukkit
+         if (packet.getSlot() >= 0 && packet.getSlot() < Inventory.getSelectionSize()) {
+-            if (packet.getSlot() == this.player.getInventory().getSelectedSlot()) { return; } // Paper - don't fire itemheldevent when there wasn't a slot change
++            if (packet.getSlot() == this.player.getInventory().getSelectedSlot()) {
++                return;
++            } // Paper - don't fire itemheldevent when there wasn't a slot change
+             PlayerItemHeldEvent event = new PlayerItemHeldEvent(this.getCraftPlayer(), this.player.getInventory().getSelectedSlot(), packet.getSlot());
+             this.cserver.getPluginManager().callEvent(event);
+             if (event.isCancelled()) {
+@@ -2372,7 +2382,8 @@ public class ServerGamePacketListenerImpl
+ 
+             this.player.getInventory().setSelectedSlot(packet.getSlot());
+             this.player.resetLastActionTime();
+-            if (io.papermc.paper.configuration.GlobalConfiguration.get().unsupportedSettings.updateEquipmentOnPlayerActions) this.player.detectEquipmentUpdates(); // Paper - Force update attributes.
++            if (io.papermc.paper.configuration.GlobalConfiguration.get().unsupportedSettings.updateEquipmentOnPlayerActions)
++                this.player.detectEquipmentUpdates(); // Paper - Force update attributes.
+         } else {
+             LOGGER.warn("{} tried to set an invalid carried item", this.player.getPlainTextName());
+             this.disconnect(Component.literal("Invalid hotbar selection (Hacking?)"), org.bukkit.event.player.PlayerKickEvent.Cause.ILLEGAL_ACTION); // CraftBukkit // Paper - kick event cause
+@@ -2680,7 +2691,7 @@ public class ServerGamePacketListenerImpl
+         // CraftBukkit start - replaced with thread safe throttle
+         // throttler.increment();
+         if (!throttler.isIncrementAndUnderThreshold()
+-        // CraftBukkit end - replaced with thread safe throttle
++            // CraftBukkit end - replaced with thread safe throttle
+             && !this.server.getPlayerList().isOp(this.player.nameAndId())
+             && !this.server.isSingleplayerOwner(this.player.nameAndId())) {
+             this.disconnectAsync(Component.translatable("disconnect.spam"), org.bukkit.event.player.PlayerKickEvent.Cause.SPAM); // Paper - kick event cause & add proper async disconnect
+@@ -2812,32 +2823,32 @@ public class ServerGamePacketListenerImpl
+         // CraftBukkit end
+         // Paper start - Ensure that client receives chat packets in the same order that we add into the message signature cache
+         synchronized (this.messageSignatureCache) {
+-        this.send(
+-            new ClientboundPlayerChatPacket(
+-                this.nextChatIndex++,
+-                message.link().sender(),
+-                message.link().index(),
+-                message.signature(),
+-                message.signedBody().pack(this.messageSignatureCache),
+-                message.unsignedContent(),
+-                message.filterMask(),
+-                chatType
+-            )
+-        );
+-        MessageSignature signature = message.signature();
+-        if (signature != null) {
+-            this.messageSignatureCache.push(message.signedBody(), message.signature());
+-            int trackedCount;
+-            synchronized (this.lastSeenMessages) {
+-                this.lastSeenMessages.addPending(signature);
+-                trackedCount = this.lastSeenMessages.trackedMessagesCount();
+-            }
++            this.send(
++                new ClientboundPlayerChatPacket(
++                    this.nextChatIndex++,
++                    message.link().sender(),
++                    message.link().index(),
++                    message.signature(),
++                    message.signedBody().pack(this.messageSignatureCache),
++                    message.unsignedContent(),
++                    message.filterMask(),
++                    chatType
++                )
++            );
++            MessageSignature signature = message.signature();
++            if (signature != null) {
++                this.messageSignatureCache.push(message.signedBody(), message.signature());
++                int trackedCount;
++                synchronized (this.lastSeenMessages) {
++                    this.lastSeenMessages.addPending(signature);
++                    trackedCount = this.lastSeenMessages.trackedMessagesCount();
++                }
+ 
+-            if (trackedCount > 4096) {
+-                this.disconnectAsync(Component.translatable("multiplayer.disconnect.too_many_pending_chats"), org.bukkit.event.player.PlayerKickEvent.Cause.TOO_MANY_PENDING_CHATS); // Paper - kick event cause & add proper async disconnect
++                if (trackedCount > 4096) {
++                    this.disconnectAsync(Component.translatable("multiplayer.disconnect.too_many_pending_chats"), org.bukkit.event.player.PlayerKickEvent.Cause.TOO_MANY_PENDING_CHATS); // Paper - kick event cause & add proper async disconnect
++                }
+             }
+         }
+-        }
+         // Paper end - Ensure that client receives chat packets in the same order that we add into the message signature cache
+     }
+ 
+@@ -2910,7 +2921,8 @@ public class ServerGamePacketListenerImpl
+                 CraftEventFactory.callPlayerUseUnknownEntityEvent(ServerGamePacketListenerImpl.this.player, packet.entityId(), true, net.minecraft.world.InteractionHand.MAIN_HAND, null);
+             }
+             // Paper end - PlayerUseUnknownEntityEvent
+-            if (io.papermc.paper.configuration.GlobalConfiguration.get().unsupportedSettings.updateEquipmentOnPlayerActions) this.player.detectEquipmentUpdates(); // Paper - Force update attributes.
++            if (io.papermc.paper.configuration.GlobalConfiguration.get().unsupportedSettings.updateEquipmentOnPlayerActions)
++                this.player.detectEquipmentUpdates(); // Paper - Force update attributes.
+         }
+     }
+ 
+@@ -3002,7 +3014,8 @@ public class ServerGamePacketListenerImpl
+                 CraftEventFactory.callPlayerUseUnknownEntityEvent(ServerGamePacketListenerImpl.this.player, packet.entityId(), false, packet.hand(), packet.location());
+             }
+             // Paper end - PlayerUseUnknownEntityEvent
+-            if (io.papermc.paper.configuration.GlobalConfiguration.get().unsupportedSettings.updateEquipmentOnPlayerActions) this.player.detectEquipmentUpdates(); // Paper - Force update attributes.
++            if (io.papermc.paper.configuration.GlobalConfiguration.get().unsupportedSettings.updateEquipmentOnPlayerActions)
++                this.player.detectEquipmentUpdates(); // Paper - Force update attributes.
+         }
+     }
+ 
+@@ -3065,13 +3078,13 @@ public class ServerGamePacketListenerImpl
+         } else {
+             GameRules gameRules = this.player.level().getGameRules();
+             Map<ResourceKey<GameRule<?>>, String> values = new HashMap<>();
+-            gameRules.availableRules().forEach(rule -> addGameRuleValue(gameRules, values, (GameRule<?>)rule));
++            gameRules.availableRules().forEach(rule -> addGameRuleValue(gameRules, values, (GameRule<?>) rule));
+             this.send(new ClientboundGameRuleValuesPacket(values));
+         }
+     }
+ 
+     private static <T> void addGameRuleValue(final GameRules gameRules, final Map<ResourceKey<GameRule<?>>, String> values, final GameRule<T> rule) {
+-        BuiltInRegistries.GAME_RULE.getResourceKey(rule).ifPresent(key -> values.put((ResourceKey<GameRule<?>>)key, rule.serialize(gameRules.get(rule))));
++        BuiltInRegistries.GAME_RULE.getResourceKey(rule).ifPresent(key -> values.put((ResourceKey<GameRule<?>>) key, rule.serialize(gameRules.get(rule))));
+     }
+ 
+     @Override
+@@ -3416,8 +3429,10 @@ public class ServerGamePacketListenerImpl
+                     } else {
+                         this.player.containerMenu.broadcastChanges();
+                     }
+-                    if (packet.buttonNum() == Inventory.SLOT_OFFHAND && this.player.containerMenu != this.player.inventoryMenu) this.player.containerSynchronizer.sendOffHandSlotChange(); // Paper - update offhand data when the player is clicking in an inventory not their own as the sychronizer does not include offhand slots
+-                    if (io.papermc.paper.configuration.GlobalConfiguration.get().unsupportedSettings.updateEquipmentOnPlayerActions) this.player.detectEquipmentUpdates(); // Paper - Force update attributes.
++                    if (packet.buttonNum() == Inventory.SLOT_OFFHAND && this.player.containerMenu != this.player.inventoryMenu)
++                        this.player.containerSynchronizer.sendOffHandSlotChange(); // Paper - update offhand data when the player is clicking in an inventory not their own as the sychronizer does not include offhand slots
++                    if (io.papermc.paper.configuration.GlobalConfiguration.get().unsupportedSettings.updateEquipmentOnPlayerActions)
++                        this.player.detectEquipmentUpdates(); // Paper - Force update attributes.
+                 }
+             }
+         }
+@@ -3510,7 +3525,8 @@ public class ServerGamePacketListenerImpl
+                 if (clickAccepted) {
+                     this.player.containerMenu.broadcastChanges();
+                 }
+-                if (io.papermc.paper.configuration.GlobalConfiguration.get().unsupportedSettings.updateEquipmentOnPlayerActions) this.player.detectEquipmentUpdates(); // Paper - Force update attributes.
++                if (io.papermc.paper.configuration.GlobalConfiguration.get().unsupportedSettings.updateEquipmentOnPlayerActions)
++                    this.player.detectEquipmentUpdates(); // Paper - Force update attributes.
+             }
+         }
+     }
+@@ -3568,7 +3584,8 @@ public class ServerGamePacketListenerImpl
+                 this.player.inventoryMenu.getSlot(packet.slotNum()).setByPlayer(itemStack);
+                 this.player.inventoryMenu.setRemoteSlot(packet.slotNum(), itemStack);
+                 this.player.inventoryMenu.broadcastChanges();
+-                if (io.papermc.paper.configuration.GlobalConfiguration.get().unsupportedSettings.updateEquipmentOnPlayerActions) this.player.detectEquipmentUpdates(); // Paper - Force update attributes.
++                if (io.papermc.paper.configuration.GlobalConfiguration.get().unsupportedSettings.updateEquipmentOnPlayerActions)
++                    this.player.detectEquipmentUpdates(); // Paper - Force update attributes.
+             } else if (drop && validData) {
+                 if (this.dropSpamThrottler.isUnderThreshold()) {
+                     this.dropSpamThrottler.increment();
+@@ -3595,7 +3612,7 @@ public class ServerGamePacketListenerImpl
+         }
+         List<String> lines = Stream.of(linesArray).map(ChatFormatting::stripFormatting).collect(Collectors.toList());
+         // Paper end - Limit client sign length
+-        this.filterTextPacket(lines).thenAcceptAsync(filteredLines -> this.updateSignText(packet, (List<FilteredText>)filteredLines), this.server);
++        this.filterTextPacket(lines).thenAcceptAsync(filteredLines -> this.updateSignText(packet, (List<FilteredText>) filteredLines), this.server);
+     }
+ 
+     private void updateSignText(final ServerboundSignUpdatePacket packet, final List<FilteredText> lines) {
+@@ -3753,12 +3770,12 @@ public class ServerGamePacketListenerImpl
+             .append(
+                 () -> {
+                     this.server.executeBlocking(() -> { // Paper - Broadcast chat session update sync
+-                    this.player.setChatSession(chatSession);
+-                    this.server
+-                        .getPlayerList()
+-                        .broadcastAll(
+-                            new ClientboundPlayerInfoUpdatePacket(EnumSet.of(ClientboundPlayerInfoUpdatePacket.Action.INITIALIZE_CHAT), List.of(this.player)), this.player // Paper - Use single player info update packet on join
+-                        );
++                        this.player.setChatSession(chatSession);
++                        this.server
++                            .getPlayerList()
++                            .broadcastAll(
++                                new ClientboundPlayerInfoUpdatePacket(EnumSet.of(ClientboundPlayerInfoUpdatePacket.Action.INITIALIZE_CHAT), List.of(this.player)), this.player // Paper - Use single player info update packet on join
++                            );
+                     });
+                 }
+             );
+@@ -3806,10 +3823,12 @@ public class ServerGamePacketListenerImpl
+     public void tickClientLoadTimeout() {
+         if (this.clientLoadedTimeoutTimer > 1) { // Paper - Add PlayerLoadedWorldEvent - only reduce till 1, let the below else-if call #markClientLoaded to trigger event and reduce to 0
+             this.clientLoadedTimeoutTimer--;
+-        } else if (this.clientLoadedTimeoutTimer == 1) this.markClientLoaded(true); // Paper - Add PlayerLoadedWorldEvent - decrement by calling #markClientLoaded which will set the value to 0 *and* call the event.
++        } else if (this.clientLoadedTimeoutTimer == 1)
++            this.markClientLoaded(true); // Paper - Add PlayerLoadedWorldEvent - decrement by calling #markClientLoaded which will set the value to 0 *and* call the event.
+     }
+ 
+-    @Deprecated @io.papermc.paper.annotation.DoNotUse // Paper - Add PlayerLoadedWorldEvent
++    @Deprecated
++    @io.papermc.paper.annotation.DoNotUse // Paper - Add PlayerLoadedWorldEvent
+     private void markClientLoaded() {
+         // Paper start - Add PlayerLoadedWorldEvent
+         this.markClientLoaded(false);
+@@ -3834,13 +3853,15 @@ public class ServerGamePacketListenerImpl
+     }
+ 
+     // Paper start - Add fail move event
+-    private io.papermc.paper.event.player.PlayerFailMoveEvent fireFailMove(io.papermc.paper.event.player.PlayerFailMoveEvent.FailReason failReason,
+-                                                                           double targetX, double targetY, double targetZ, float targetYRot, float targetXRot, boolean logWarning) {
++    private io.papermc.paper.event.player.PlayerFailMoveEvent fireFailMove(
++        io.papermc.paper.event.player.PlayerFailMoveEvent.FailReason failReason,
++        double targetX, double targetY, double targetZ, float targetYRot, float targetXRot, boolean logWarning
++    ) {
+         org.bukkit.entity.Player player = this.getCraftPlayer();
+         Location from = new Location(player.getWorld(), this.lastPosX, this.lastPosY, this.lastPosZ, this.lastYRot, this.lastXRot);
+         Location to = new Location(player.getWorld(), targetX, targetY, targetZ, targetYRot, targetXRot);
+         io.papermc.paper.event.player.PlayerFailMoveEvent event = new io.papermc.paper.event.player.PlayerFailMoveEvent(player, failReason,
+-            false, logWarning, from, to);
++                                                                                                                        false, logWarning, from, to);
+         event.callEvent();
+         return event;
+     }
